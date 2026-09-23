@@ -21,7 +21,7 @@ internal sealed class SpeedOverlayForm : Form
     private readonly Label _uploadLabel = new();
     private readonly Label _downloadLabel = new();
     private readonly Action _restoreAction;
-    private readonly System.Windows.Forms.Timer _keepAboveTimer = new() { Interval = 5_000 };
+    private readonly System.Windows.Forms.Timer _keepAboveTimer = new() { Interval = 2_000 };
     private bool _disposing;
 
     public SpeedOverlayForm(Action restoreAction)
@@ -45,8 +45,8 @@ internal sealed class SpeedOverlayForm : Form
         Resize += (_, _) => LayoutSpeedLabels();
         _keepAboveTimer.Tick += (_, _) =>
         {
-            UpdateTaskbarAppearance();
             KeepAboveTaskbar();
+            UpdateTaskbarAppearance();
         };
         LayoutSpeedLabels();
     }
@@ -268,6 +268,13 @@ internal sealed class SpeedOverlayForm : Form
             return;
         }
 
+        // Taskbar buttons can change the notification area's position after this form is shown.
+        var targetBounds = CalculateBounds();
+        if (Bounds != targetBounds)
+        {
+            Bounds = targetBounds;
+        }
+
         SetWindowPos(
             Handle,
             HwndTopMost,
@@ -296,10 +303,11 @@ internal sealed class SpeedOverlayForm : Form
                 var anchorLeft = hiddenIconsButtonLeft
                     ?? (hasTrayRect ? trayRect.Left : taskbar.Right - 220);
                 var right = anchorLeft - GapFromHiddenIconsButton;
-                var x = Math.Max(taskbar.Left, right - OverlayWidth);
+                var width = Math.Min(OverlayWidth, Math.Max(1, right - taskbar.Left));
+                var x = right - width;
                 var height = Math.Max(1, taskbar.Height - 2);
                 var y = taskbar.Top + 1;
-                return new Rectangle(x, y, OverlayWidth, height);
+                return new Rectangle(x, y, width, height);
             }
         }
 
