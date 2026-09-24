@@ -40,7 +40,7 @@ internal sealed class MainForm : Form
     {
         _startInTray = startInTray;
         _applicationIcon = LoadApplicationIcon();
-        Text = "网卡监视器 wifix";
+        Text = "网卡监视器";
         StartPosition = FormStartPosition.CenterScreen;
         MinimumSize = new Size(720, 400);
         Size = new Size(900, 500);

@@ -21,7 +21,7 @@ internal sealed class SpeedOverlayForm : Form
     private readonly Label _uploadLabel = new();
     private readonly Label _downloadLabel = new();
     private readonly Action _restoreAction;
-    private readonly System.Windows.Forms.Timer _keepAboveTimer = new() { Interval = 2_000 };
+    private readonly System.Windows.Forms.Timer _keepAboveTimer = new() { Interval = 5_000 };
     private bool _disposing;
 
     public SpeedOverlayForm(Action restoreAction)

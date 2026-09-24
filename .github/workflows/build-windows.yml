@@ -1,0 +1,23 @@
+name: Build Windows release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Publish application
+        shell: pwsh
+        run: dotnet publish NetworkCardMonitor/NetworkCardMonitor.csproj --configuration Release --self-contained false -p:PublishSingleFile=false -p:DebugType=None -p:DebugSymbols=false --output publish
+      - name: Package application
+        shell: pwsh
+        run: Compress-Archive -Path publish/* -DestinationPath Network.Adapter.Monitor.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Network.Adapter.Monitor
+          path: Network.Adapter.Monitor.zip
